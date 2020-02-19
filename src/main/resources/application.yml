@@ -1,0 +1,81 @@
+spring:
+  profiles:
+    default: development
+    active: development 
+    maxActive: 5
+    tomcat:
+      max-active: 1 
+      min-idle: 1
+      initialSize: 1
+  jackson.deserialization.fail-on-unknown-properties: true 
+  jpa:
+#    hibernate:
+#      ddl-auto: create 
+    properties:
+      hibernate:
+        proc:
+          param_null_passing : true
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL93Dialect
+  datasource:
+    username: postgres
+    password: scaboard
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+  h2:
+    console:
+      enabled: true          
+
+currentEnvironment: DEV
+application:
+  refreshInterval: 5000
+---
+
+spring:
+  profiles: development
+  
+# context Path
+server:
+    port: 9080   
+       
+---
+
+spring:
+  profiles: test
+  
+# context Path
+server:
+    port: 9080
+
+---
+
+spring:
+  profiles: production
+  
+# context Path
+server:
+    port: 9080
+
+---
+# common properties for yaml 
+
+# context Path
+server:
+  servlet:
+    context-path: /health-board-api/v1.0
+      
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: "${hystrixThreadTimeoutInMillis}"
+          strategy: SEMAPHORE
+      fallback:
+        enabled: "${fallbackEnabled}"
+      circuitBreaker:
+        enabled: "${circuitEnabled}"
+        sleepWindowInMilliseconds: "${sleepWindowInMilliseconds}"
+        requestVolumeThreshold: "${requestVolumeThreshold}"
+

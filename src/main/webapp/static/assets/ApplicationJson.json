@@ -1,0 +1,55 @@
+[
+    {
+        "environment": "DEV",
+        "applicationDataInformationList": [
+            {
+                "lab": "SCA",
+                "applicationDataList": [
+                    {
+                        "name": "call challenge call back auth mech",
+                        "appStatus": true,
+                        "lastAlive": "2020.02.16.18.13.38",
+                        "downSince": null,
+                        "url": "http://localhost:9080/health-board-api/v1.0/health",
+                        "id": 53,
+                        "appId": "CCCB-sandbox",
+                        "lab": "SCA",
+                        "environment": "DEV"
+                    },
+                    {
+                        "name": "sms otp auth mech",
+                        "appStatus": true,
+                        "lastAlive": "2020.02.16.18.13.38",
+                        "downSince": null,
+                        "url": "http://localhost:9080/health-board-api/v1.0/health",
+                        "id": 54,
+                        "appId": "sms-otp-sandbox",
+                        "lab": "SCA",
+                        "environment": "DEV"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "environment": "sandbox",
+        "applicationDataInformationList": [
+            {
+                "lab": "SCA",
+                "applicationDataList": [
+                    {
+                        "name": "call challenge auth mech",
+                        "appStatus": false,
+                        "lastAlive": "2020.02.16.13.55.25",
+                        "downSince": "2020.02.16.13.55.43",
+                        "url": "http://localhost:9080/health-board-api/v1.0/health2",
+                        "id": 52,
+                        "appId": "CCAM-sandbox",
+                        "lab": "SCA",
+                        "environment": "sandbox"
+                    }
+                ]
+            }
+        ]
+    }
+]
