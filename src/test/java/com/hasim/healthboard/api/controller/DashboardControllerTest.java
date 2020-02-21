@@ -27,7 +27,7 @@ public class DashboardControllerTest {
     
     @Test
     public void testCheckHealth() throws Exception {
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/health")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/health").header("Origin", "localhost")
             .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         MockHttpServletResponse response = result.getResponse();

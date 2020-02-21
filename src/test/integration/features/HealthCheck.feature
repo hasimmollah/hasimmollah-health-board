@@ -2,7 +2,6 @@ Feature: Get Telephone Details (Integration Tests)
 
      @Sandbox @SIT @Integration  
   Scenario Outline: Validate Health Check of Health Board Api
-    Given I am a user <User>
     When I make a request for health check to Health Board Api
     Then I should get the response with StatusCode as <StatusCode> and health check message as <healthcheckmessage>
     Examples:

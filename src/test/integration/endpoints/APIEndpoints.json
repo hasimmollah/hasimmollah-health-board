@@ -1,4 +1,4 @@
 {
-  "endpoint": "http://localhost:9080/health-board-api/${VERSION}",
-  "healthCheck": "http://localhost:9080/health-board-api/${VERSION}/"
+  "endpoint": "http://localhost:9080/health-board-api/v1.0",
+  "healthCheck": "http://localhost:9080/health-board-api/v1.0/"
 }

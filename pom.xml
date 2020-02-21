@@ -35,7 +35,7 @@
 	</profiles>
 
 	<dependencies>
-	<dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -58,7 +58,7 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
@@ -128,7 +128,7 @@
 			<version>1.4.5.RELEASE</version>
 		</dependency>
 		<!-- Common dependencies -->
-		
+
 
 		<!-- START*** COMPONENT AND INTEGRATION TEST DEPENDENCIES *** START -->
 		<dependency>
@@ -213,7 +213,7 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
-		
+
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -250,7 +250,7 @@
 			</exclusions>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
@@ -279,8 +279,13 @@
 			<artifactId>jquery</artifactId>
 			<version>3.1.1-1</version>
 		</dependency>
-		
-		
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+			<version>1.4.199</version>
+		</dependency>
 		<!-- mock server end -->
 		<!-- END *** COMPONENT AND INTEGRATION TEST DEPENDENCIES *** END -->
 	</dependencies>
@@ -457,8 +462,8 @@
 							<nonFilteredFileExtensions>
 								<nonFilteredFileExtension>jar</nonFilteredFileExtension>
 								<nonFilteredFileExtension>jks</nonFilteredFileExtension>
-								
-								
+
+
 							</nonFilteredFileExtensions>
 							<resources>
 								<resource>
@@ -471,8 +476,8 @@
 							</resources>
 						</configuration>
 					</execution>
-				
-					
+
+
 				</executions>
 			</plugin>
 			<plugin>
@@ -638,5 +643,5 @@
 		</plugins>
 
 	</build>
-	
+
 </project>
