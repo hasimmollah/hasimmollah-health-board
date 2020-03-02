@@ -29,7 +29,7 @@ import com.hasim.healthboard.api.constant.CommonConstant;
 @ComponentScan(basePackages = { "com.hasim.healthboard.api.*" })
 public class HealthBoardApiApplication extends SpringBootServletInitializer {
 	public static void main(String[] args) {
-		if (args.length > 0) {
+		if (args.length > 0 && !args[0].contains(CommonConstant.SPRING_CONFIG_COMMAND ) ) {
 			System.setProperty(CommonConstant.DATA_PATH_INPUT, args[0]);
 		}
 

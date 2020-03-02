@@ -28,7 +28,7 @@ public class DashboardServiceHelperImpl implements DashboardServiceHelper {
     @Autowired
     RestTemplate restTemplate;
 
-    @Value("${currentEnvironment:}")
+    @Value("${currentEnvironment:DEV}")
     private String currentEnvironment;
 
     @Override

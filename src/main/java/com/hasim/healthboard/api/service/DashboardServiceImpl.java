@@ -1,7 +1,10 @@
 package com.hasim.healthboard.api.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -88,25 +91,104 @@ public class DashboardServiceImpl implements DashboardService {
 			throw new HealthBoardSQLException(e);
 		}
 		applications = prepareApplicationVOList(applicationEntityCol);
+		sendDataToTopic(applications);
 		logger.info("Finished executing getApplications");
 		return applications;
 	}
 
 	@Async
 	private void fetchApplicationsAndSendToTopic() {
+		List<ApplicationVO> applicationVOList = getApplications();
+		sendDataToTopic(applicationVOList);
+	}
+	@Async
+	private void sendDataToTopic(List<ApplicationVO> applicationVOList) {
+		List<ApplicationDataResponse> applicationDataResponseList = DashboardCommonUtil
+				.convertApplicationVoListToApplicationDataResponseList(applicationVOList);
+		sendToTopic(CommonConstant.TOPIC_APPLICATIONS, applicationDataResponseList);
+		
+		Map<String,Map<String,Map<String,String>>> finalStatMap =  prepareAppStat(applicationVOList);
+		
+		Map<String,Collection<Map<String,String>>> mapToSendToTopic = new HashMap();
+		for(String key:finalStatMap.keySet()) {
+			mapToSendToTopic.put(key, finalStatMap.get(key).values());
+		}
+		
+		sendToTopic(CommonConstant.TOPIC_APPLICATIONS_STAT, mapToSendToTopic);
+	}
+	
+	
+	private void sendToTopic(String topic, Object data) {
+		String message = null;
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-		String message = null;
-		List<ApplicationDataResponse> applicationDataResponseList = DashboardCommonUtil
-				.convertApplicationVoListToApplicationDataResponseList(getApplications());
+		
 		try {
-			message = ow.writeValueAsString(applicationDataResponseList);
+			message = ow.writeValueAsString(data);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
-		simpMessagingTemplate.convertAndSend("/topic/applications", message);
+		simpMessagingTemplate.convertAndSend(topic, message);
+	}
+	
+	private Map<String,Map<String,Map<String,String>>> prepareAppStat(List<ApplicationVO> applicationVOList){
+		 Map<String,Map<String,Map<String,String>>> finalResult = new HashMap();
+		 
+		 finalResult.put(CommonConstant.ENVIRONMENT, new HashMap());
+		 finalResult.put(CommonConstant.LAB, new HashMap());
+		 
+		 for(ApplicationVO applicationVO:applicationVOList) {
+			 Map<String,Map<String,String>> environmentMap = finalResult.get(CommonConstant.ENVIRONMENT);
+			 
+			 String environment = applicationVO.getEnvironment();
+			 Map<String,String> statMap=environmentMap.get(environment);
+			 if(statMap==null) {
+				 statMap = new HashMap();
+				 statMap.put(CommonConstant.NAME,environment);
+			 }
+			 
+			 int liveCount = statMap.get(CommonConstant.LIVE_COUNT)!=null?Integer.valueOf(statMap.get(CommonConstant.LIVE_COUNT)):0;
+			 int deadCount = statMap.get(CommonConstant.DEAD_COUNT)!=null?Integer.valueOf(statMap.get(CommonConstant.DEAD_COUNT)):0;
+			 if(applicationVO.isAppStatus()) {
+				 liveCount = liveCount+1;
+			 } else {
+				 deadCount=deadCount+1;
+			 }
+			 statMap.put(CommonConstant.LIVE_COUNT, String.valueOf(liveCount));
+			 statMap.put(CommonConstant.DEAD_COUNT, String.valueOf(deadCount));
+			 
+			 environmentMap.put(environment, statMap);
+			 
+			 
+			 
+			 
+			 Map<String,Map<String,String>> lapMap = finalResult.get(CommonConstant.LAB);
+			 
+			 
+			 String lab = applicationVO.getLab();
+			 Map<String,String> statLabMap=lapMap.get(lab);
+			 if(statLabMap==null) {
+				 statLabMap = new HashMap();
+				 statLabMap.put(CommonConstant.NAME,lab);
+			 }
+			 
+			 int liveCountLab = statLabMap.get(CommonConstant.LIVE_COUNT)!=null?Integer.valueOf(statLabMap.get(CommonConstant.LIVE_COUNT)):0;
+			 int deadCountLab = statLabMap.get(CommonConstant.DEAD_COUNT)!=null?Integer.valueOf(statLabMap.get(CommonConstant.DEAD_COUNT)):0;
+			 if(applicationVO.isAppStatus()) {
+				 liveCountLab = liveCountLab+1;
+			 } else {
+				 deadCountLab=deadCountLab+1;
+			 }
+			 statLabMap.put(CommonConstant.LIVE_COUNT, String.valueOf(liveCountLab));
+			 statLabMap.put(CommonConstant.DEAD_COUNT, String.valueOf(deadCountLab));
+			 
+			 lapMap.put(lab, statLabMap);
+			 
+			 
+		 }
+		 
+		 return finalResult;
 	}
 
 	
@@ -132,7 +214,7 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	@Override
-	public ApplicationVO createApplication(ApplicationVO applicationVO) {
+	public ApplicationVO createOrUpdateApplication(ApplicationVO applicationVO) {
 		logger.info("Finished executing fetch createApplication");
 		List<ApplicationVO> applicationVOListToCheckHelth = new ArrayList();
 		applicationVOListToCheckHelth.add(applicationVO);
@@ -188,7 +270,8 @@ public class DashboardServiceImpl implements DashboardService {
 			applicationCache.refresh(applicationVOsOutputList.stream()
 					.collect(Collectors.toMap(ApplicationVO::getAppId, applicationVO -> applicationVO)));
 		}
-		fetchApplicationsAndSendToTopic();
+		applicationVOList = getApplications();
+		sendDataToTopic(applicationVOList);
 		logger.info("Finished executing fetch checkAndUpdateApplicationsstatus");
 	}
 

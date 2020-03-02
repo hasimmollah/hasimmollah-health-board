@@ -32,7 +32,7 @@ public class ApplicationVO {
         if (applicationVO == null) return false;
         if (applicationVO == this) return true; 
         if(applicationVO instanceof ApplicationVO) {
-            return ((this.appId).equals(((ApplicationVO)applicationVO).appId));
+            return ((this.appId).equalsIgnoreCase(((ApplicationVO)applicationVO).appId));
         }
         return false;
     }

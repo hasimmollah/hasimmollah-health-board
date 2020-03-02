@@ -11,5 +11,5 @@ public interface DashboardService {
 
     public ApplicationVO  getApplication(String appId, boolean isCreateMode);
     public List< ApplicationVO> getApplications();
-    public ApplicationVO createApplication(ApplicationVO applicationVO);
+    public ApplicationVO createOrUpdateApplication(ApplicationVO applicationVO);
 }

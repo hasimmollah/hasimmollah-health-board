@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hasim.healthboard.api.config.AppConfig;
 import com.hasim.healthboard.api.model.ApplicationData;
 import com.hasim.healthboard.api.model.ApplicationDataResponse;
 import com.hasim.healthboard.api.model.ApplicationRequest;
@@ -37,60 +36,52 @@ import com.hasim.healthboard.api.service.DashboardFacade;
 @EnableAutoConfiguration
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DashboardController {
-    private static final Logger logger = LogManager.getLogger(DashboardController.class);
-    
-    @Autowired
-    DashboardFacade dashboardFacade;
-    
-    @Value("${currentEnvironment:}")
-    private String currentEnvironment;
-    
-    @Autowired
-    private Environment env;
-    
-    @Autowired
-    AppConfig appConfig;
-    
-    @RequestMapping(value = "/health", method = RequestMethod.GET, produces = "application/json")
-    @ResponseStatus(HttpStatus.OK)
-    public String checkHealth() {
-        return "Health Board api is up";
-    }
-    
-    @RequestMapping(value = "/applications", method = RequestMethod.GET, headers = "Accept=application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public ResponseEntity<List<ApplicationDataResponse>> getApplications(@RequestHeader HttpHeaders headers,
-        HttpServletRequest request) {
-        logger.info("Started executing getApplications");
-        
-        List<ApplicationDataResponse> appllicationList=dashboardFacade.getAllApplications();
-        logger.info("Finished executing getApplications");
-        return new ResponseEntity<>(
-            appllicationList,
-            HttpStatus.OK);
-    }
-    
-    @RequestMapping(value = "/applications/application", method = RequestMethod.POST, headers = "Accept=application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public ResponseEntity<ApplicationData> createApplication(@RequestBody(required = true) @Valid ApplicationRequest applicationRequest,
-        @RequestHeader HttpHeaders headers,
-        HttpServletRequest request){
-        logger.info(env.getProperty("currentEnvironment"));
-        ApplicationData applicationResponse= dashboardFacade.createApplication(applicationRequest);
-        return new ResponseEntity<ApplicationData>(applicationResponse,
-            HttpStatus.OK);
-    }
-    
-    @RequestMapping(value = "/applications/application/{appId}", method = RequestMethod.GET, headers = "Accept=application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public ResponseEntity<ApplicationData> getApplication(@PathVariable("appId") String appId, @RequestHeader HttpHeaders headers,
-        HttpServletRequest request) {
-        logger.info("Started executing getApplication");
-        logger.info("appId = "+appId);
-        ApplicationData applicationResponse= dashboardFacade.getApplication(appId);
-        logger.info("Finished executing getApplication");
-        return new ResponseEntity<>(
-            applicationResponse,
-            HttpStatus.OK);
-    }
+	private static final Logger logger = LogManager.getLogger(DashboardController.class);
+
+	@Autowired
+	DashboardFacade dashboardFacade;
+
+	@Value("${currentEnvironment:DEV}")
+	private String currentEnvironment;
+
+	@Autowired
+	private Environment env;
+
+	@RequestMapping(value = "/health", method = RequestMethod.GET, produces = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public String checkHealth() {
+		return "Health Board api is up";
+	}
+
+	@RequestMapping(value = "/applications", method = RequestMethod.GET, headers = "Accept=application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<List<ApplicationDataResponse>> getApplications(@RequestHeader HttpHeaders headers,
+			HttpServletRequest request) {
+		logger.info("Started executing getApplications");
+
+		List<ApplicationDataResponse> appllicationList = dashboardFacade.getAllApplications();
+		logger.info("Finished executing getApplications");
+		return new ResponseEntity<>(appllicationList, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/applications/application", method = RequestMethod.POST, headers = "Accept=application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<ApplicationData> createOrUpdateApplication(
+			@RequestBody(required = true) @Valid ApplicationRequest applicationRequest,
+			@RequestHeader HttpHeaders headers, HttpServletRequest request) {
+		logger.info(env.getProperty("currentEnvironment"));
+		ApplicationData applicationResponse = dashboardFacade.createOrUpdateApplication(applicationRequest);
+		return new ResponseEntity<ApplicationData>(applicationResponse, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/applications/application/{appId}", method = RequestMethod.GET, headers = "Accept=application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<ApplicationData> getApplication(@PathVariable("appId") String appId,
+			@RequestHeader HttpHeaders headers, HttpServletRequest request) {
+		logger.info("Started executing getApplication");
+		logger.info("appId = " + appId);
+		ApplicationData applicationResponse = dashboardFacade.getApplication(appId);
+		logger.info("Finished executing getApplication");
+		return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
+	}
 }

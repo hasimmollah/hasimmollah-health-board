@@ -6,19 +6,21 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.hasim.healthboard.api.constant.CommonConstant;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.enableSimpleBroker("/topic");
+		config.enableSimpleBroker(CommonConstant.TOPIC_PATH);
 		//config.setApplicationDestinationPrefixes("/");
 	}
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/health-board-websocket").setAllowedOrigins("*").withSockJS();
+		registry.addEndpoint(CommonConstant.WEB_SOCKET_ENDPOINT).setAllowedOrigins(CommonConstant.ASTERIX).withSockJS();
 		
 	}
 

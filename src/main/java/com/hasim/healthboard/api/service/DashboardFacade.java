@@ -47,11 +47,11 @@ public class DashboardFacade {
 		return applicationResponse;
 	}
 
-	public ApplicationData createApplication(ApplicationRequest applicationRequest) {
+	public ApplicationData createOrUpdateApplication(ApplicationRequest applicationRequest) {
 
 		ApplicationVO applicationVO = dashboardService.getApplication(applicationRequest.getAppId(), true);
 		applicationVO = DashboardCommonUtil.prepareApplicationVOFromRequest(applicationRequest, applicationVO);
-		ApplicationVO applicationVOOutput = dashboardService.createApplication(applicationVO);
+		ApplicationVO applicationVOOutput = dashboardService.createOrUpdateApplication(applicationVO);
 		return DashboardCommonUtil.prepareApplicationVOToUserResponse(applicationVOOutput);
 	}
 
